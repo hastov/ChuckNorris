@@ -2,21 +2,19 @@ package com.valio.chucknorriss;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.net.URL;
 
 interface CategoriesCallback {
     void onSuccess(String[] categories);
@@ -43,23 +41,18 @@ public class NetworkManager {
         if (queue == null) {
             queue = Volley.newRequestQueue(context);
         }
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        String noBrackets = response.replace("[", "").replace("]","")
-                                .replace("\"","");
-                        callback.onSuccess(noBrackets.split(","));
-                    }
-                }, new Response.ErrorListener() {
+        JsonArrayRequest request = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                callback.onError(error);
+            public void onResponse(JSONArray response) {
+                String[] list = new String[response.length()];
+                for(int i = 0; i < response.length(); i++){
+                    list[i] = response.optString(i);
+                }
+                callback.onSuccess(list);
             }
-        });
+        }, null);
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queue.add(request);
     }
 
     protected void getJoke(Context context, String category, final JokeCallback callback) {
