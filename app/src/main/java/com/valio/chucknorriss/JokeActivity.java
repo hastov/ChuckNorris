@@ -2,6 +2,7 @@ package com.valio.chucknorriss;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
 import android.net.Network;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -23,20 +24,36 @@ public class JokeActivity extends AppCompatActivity {
         jokeTextView = findViewById(R.id.jokeTextView);
         String category = getIntent().getStringExtra("category");
         if (category != null) {
-            fetchJoke(category);
+            setTitle(category);
+            getJoke(category);
         }
     }
 
-    private void fetchJoke(String category) {
+    private void getJoke(String category) {
         networkManager = new NetworkManager();
         networkManager.getJoke(this, category, new JokeCallback() {
             @Override
-            public void onSuccess(String joke) {
-                jokeTextView.setText(joke);
+            public void onSuccess(Joke joke) {
+                jokeTextView.setText(joke.text);
+                getBitmap(joke.iconURL);
             }
             @Override
             public void onError(VolleyError error) {
                 System.out.print(error.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void getBitmap(String url) {
+        networkManager.getBitmap(this, url, new BitmapCallback() {
+            @Override
+            public void onSuccess(Bitmap bitmap) {
+                jokeImageView.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
             }
         });
     }
