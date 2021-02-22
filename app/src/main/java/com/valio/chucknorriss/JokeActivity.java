@@ -22,6 +22,7 @@ public class JokeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_joke);
         jokeImageView = findViewById(R.id.jokeImageView);
         jokeTextView = findViewById(R.id.jokeTextView);
+        // Get the passed category from the previous view
         String category = getIntent().getStringExtra("category");
         if (category != null) {
             setTitle(category);
@@ -37,10 +38,6 @@ public class JokeActivity extends AppCompatActivity {
                 jokeTextView.setText(joke.text);
                 getBitmap(joke.iconURL);
             }
-            @Override
-            public void onError(VolleyError error) {
-                System.out.print(error.getLocalizedMessage());
-            }
         });
     }
 
@@ -49,11 +46,6 @@ public class JokeActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Bitmap bitmap) {
                 jokeImageView.setImageBitmap(bitmap);
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-
             }
         });
     }

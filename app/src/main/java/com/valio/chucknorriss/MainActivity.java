@@ -12,10 +12,8 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     private NetworkManager networkManager;
-    private String[] categories;
 
-    void setCategories(String[] newCategories) {
-        categories = newCategories;
+    void viewCategories(String[] categories) {
         recyclerView = findViewById(R.id.recyclerView);
         CategoriesAdapter adapter = new CategoriesAdapter(this, categories);
         recyclerView.setAdapter(adapter);
@@ -30,15 +28,15 @@ public class MainActivity extends AppCompatActivity {
         if (networkManager == null) {
             networkManager = new NetworkManager();
         }
-        networkManager.getCategories(this, new CategoriesCallback() {
+
+        // An interface object whose overridden method should be called by the NetworkManager when
+        // it parses the response
+        CategoriesCallback callback = new CategoriesCallback() {
             @Override
             public void onSuccess(String[] categories) {
-                setCategories(categories);
+                viewCategories(categories);
             }
-            @Override
-            public void onError(VolleyError error) {
-                System.out.print(error.getLocalizedMessage());
-            }
-        });
+        };
+        networkManager.getCategories(this, callback);
     }
 }

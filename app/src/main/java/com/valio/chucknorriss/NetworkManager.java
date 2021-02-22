@@ -18,17 +18,14 @@ import org.json.JSONObject;
 
 interface CategoriesCallback {
     void onSuccess(String[] categories);
-    void onError(VolleyError error);
 }
 
 interface JokeCallback {
     void onSuccess(Joke joke);
-    void onError(VolleyError error);
 }
 
 interface BitmapCallback {
     void onSuccess(Bitmap bitmap);
-    void onError(VolleyError error);
 }
 
 public class NetworkManager {
@@ -41,7 +38,9 @@ public class NetworkManager {
         if (queue == null) {
             queue = Volley.newRequestQueue(context);
         }
-        JsonArrayRequest request = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+        // An interface object whose overridden method will be called by the library when it
+        // receives a response. This way the code can be executed after a network delay.
+        Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 String[] list = new String[response.length()];
@@ -50,7 +49,8 @@ public class NetworkManager {
                 }
                 callback.onSuccess(list);
             }
-        }, null);
+        };
+        JsonArrayRequest request = new JsonArrayRequest(url, listener, null);
         // Add the request to the RequestQueue.
         queue.add(request);
     }
@@ -60,24 +60,14 @@ public class NetworkManager {
         if (queue == null) {
             queue = Volley.newRequestQueue(context);
         }
-        // Request a string response from the provided URL.
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
-                        try {
-                            Joke joke = new Joke(jsonObject);
-                            callback.onSuccess(joke);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        Joke joke = new Joke(jsonObject);
+                        callback.onSuccess(joke);
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-                    }
-                });
+                }, null);
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
     }
@@ -86,19 +76,13 @@ public class NetworkManager {
         if (queue == null) {
             queue = Volley.newRequestQueue(context);
         }
-        // Request a string response from the provided URL.
         ImageRequest request = new ImageRequest(url,
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap bitmap) {
                         callback.onSuccess(bitmap);
                     }
-                }, 0, 0, null,
-                new Response.ErrorListener() {
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-                    }
-                });
+                }, 0, 0, null, null);
         // Add the request to the RequestQueue.
         queue.add(request);
     }

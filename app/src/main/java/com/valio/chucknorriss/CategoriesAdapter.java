@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoriesViewHolder> {
 
-    Context context;
-    String[] categories;
+    private Context context;
+    private String[] categories;
 
     public CategoriesAdapter(Context context, String[] categories) {
         this.context = context;
@@ -32,9 +32,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     @Override
     public void onBindViewHolder(@NonNull CategoriesViewHolder holder, int position) {
         holder.textView.setText(categories[position]);
+        // An interface object whose overridden method will be executed if a row is clicked
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Pass the category to the next view
                 Intent intent = new Intent(context, JokeActivity.class);
                 intent.putExtra("category", categories[position]);
                 context.startActivity(intent);
@@ -47,6 +49,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         return categories.length;
     }
 
+    // A class for each row
     class CategoriesViewHolder extends RecyclerView.ViewHolder {
 
         private TextView textView;
