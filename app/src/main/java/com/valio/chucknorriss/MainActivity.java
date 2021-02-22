@@ -6,8 +6,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
-import com.android.volley.VolleyError;
-
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
@@ -15,6 +13,8 @@ public class MainActivity extends AppCompatActivity {
 
     void viewCategories(String[] categories) {
         recyclerView = findViewById(R.id.recyclerView);
+        // Crate an adapter object who will be responsible for the number and UI of the rows in the
+        // table (recyclerView)
         CategoriesAdapter adapter = new CategoriesAdapter(this, categories);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -24,16 +24,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         if (networkManager == null) {
             networkManager = new NetworkManager();
         }
-
         // An interface object whose overridden method should be called by the NetworkManager when
         // it parses the response
-        CategoriesCallback callback = new CategoriesCallback() {
+        CategoriesListener callback = new CategoriesListener() {
             @Override
-            public void onSuccess(String[] categories) {
+            public void onResponse(String[] categories) {
                 viewCategories(categories);
             }
         };

@@ -3,12 +3,9 @@ package com.valio.chucknorriss;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
-import android.net.Network;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.android.volley.VolleyError;
 
 public class JokeActivity extends AppCompatActivity {
 
@@ -32,9 +29,9 @@ public class JokeActivity extends AppCompatActivity {
 
     private void getJoke(String category) {
         networkManager = new NetworkManager();
-        networkManager.getJoke(this, category, new JokeCallback() {
+        networkManager.getJoke(this, category, new JokeListener() {
             @Override
-            public void onSuccess(Joke joke) {
+            public void onResponse(Joke joke) {
                 jokeTextView.setText(joke.text);
                 getBitmap(joke.iconURL);
             }
@@ -42,9 +39,9 @@ public class JokeActivity extends AppCompatActivity {
     }
 
     private void getBitmap(String url) {
-        networkManager.getBitmap(this, url, new BitmapCallback() {
+        networkManager.getBitmap(this, url, new BitmapListener() {
             @Override
-            public void onSuccess(Bitmap bitmap) {
+            public void onResponse(Bitmap bitmap) {
                 jokeImageView.setImageBitmap(bitmap);
             }
         });
